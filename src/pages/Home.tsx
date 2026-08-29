@@ -18,7 +18,10 @@ export default function Home() {
     getEvents().then(setEvents).catch(() => {});
   }, []);
 
-  const upcoming = events.slice(0, 3);
+  const cityEvents = location
+    ? events.filter(e => e.cidade?.toLowerCase() === location.cidade?.toLowerCase())
+    : events;
+  const upcoming = cityEvents.slice(0, 3);
   const totalCities = new Set(events.map(e => e.cidade?.toLowerCase())).size;
 
   return (
@@ -85,8 +88,12 @@ export default function Home() {
         <section className="mt-12">
           <div className="flex items-center justify-between mb-8">
             <div>
-              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">Próximos eventos</h2>
-              <p className="text-gray-500 mt-1">Não perca o que acontece na sua região</p>
+              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">
+                {location ? `Eventos em ${capitalizeWords(location.cidade)}` : 'Próximos eventos'}
+              </h2>
+              <p className="text-gray-500 mt-1">
+                {location ? 'O que acontece na sua região' : 'Não perca o que acontece perto de você'}
+              </p>
             </div>
             <Link to="/eventos" className="hidden sm:inline-flex items-center gap-1.5 text-emerald-600 hover:text-emerald-700 font-semibold text-sm">
               Ver todos <ArrowRight className="w-4 h-4" />
@@ -146,24 +153,7 @@ export default function Home() {
         </section>
       )}
 
-      {/* CTA */}
-      <section className="mt-12 bg-emerald-50 rounded-3xl border border-emerald-100 p-8 sm:p-12">
-        <div className="flex flex-col sm:flex-row items-center gap-8">
-          <div className="flex-1">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3">Sua comunidade precisa de você</h2>
-            <p className="text-gray-600 text-lg leading-relaxed">
-              Tem um evento cultural acontecendo? Divulgue aqui e conecte sua comunidade à cultura local.
-            </p>
-          </div>
-          <Link
-            to="/cadastrar"
-            className="shrink-0 inline-flex items-center gap-2.5 bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all shadow-sm hover:shadow-md"
-          >
-            <PlusCircle className="w-5 h-5" />
-            Cadastrar agora
-          </Link>
-        </div>
-      </section>
+
     </div>
   );
 }
