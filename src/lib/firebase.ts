@@ -1,31 +1,6 @@
-let app: any = null;
-let db: any = null;
-let firebaseAvailable = false;
+import { initializeApp } from 'firebase/app';
+import { getFirestore } from 'firebase/firestore';
+import firebaseConfig from '../../firebase-applet-config.json';
 
-async function initFirebase() {
-  try {
-    const { initializeApp } = await import('firebase/app');
-    const { getFirestore } = await import('firebase/firestore');
-    const firebaseConfig = await import('../../firebase-applet-config.json');
-
-    app = initializeApp(firebaseConfig.default || firebaseConfig);
-    db = getFirestore(app, (firebaseConfig.default || firebaseConfig).firestoreDatabaseId || '(default)');
-    firebaseAvailable = true;
-    console.log('Firebase conectado com sucesso.');
-  } catch (err) {
-    console.warn('Firebase indisponivel. Usando armazenamento local.', err);
-    firebaseAvailable = false;
-  }
-}
-
-const firebasePromise = initFirebase();
-
-export function isFirebaseAvailable() {
-  return firebaseAvailable;
-}
-
-export function getFirebaseReady() {
-  return firebasePromise;
-}
-
-export { app, db };
+export const app = initializeApp(firebaseConfig);
+export const db = getFirestore(app, (firebaseConfig as any).firestoreDatabaseId || '(default)');

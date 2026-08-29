@@ -1,8 +1,7 @@
-import { EventData } from '../types';
+import { collection, addDoc, getDocs, limit, query } from 'firebase/firestore';
+import { db } from './firebase';
 
-const EVENTS_STORAGE_KEY = 'cultura_perto_events';
-
-const DEMO_EVENTS: Omit<EventData, 'id'>[] = [
+const DEMO_EVENTS = [
   {
     nomeEvento: 'Sarau da Praça',
     descricaoCurta: 'Um encontro de poetas, músicos e artistas locais na praça principal para celebrar a cultura popular com microfone aberto.',
@@ -98,7 +97,7 @@ const DEMO_EVENTS: Omit<EventData, 'id'>[] = [
   },
   {
     nomeEvento: 'Batalha de Rima',
-    descricaoCurta: 'Encontro de MCs para batalhas de conhecimento e arte. Inscrições abertas na hora.',
+    descricaoCurta: 'Encontro de MCs para batalhas de conhecimento e sangue. Inscrições abertas na hora.',
     cidade: 'Brasília',
     estado: 'DF',
     bairro: 'Ceilândia',
@@ -133,7 +132,7 @@ const DEMO_EVENTS: Omit<EventData, 'id'>[] = [
     atualizadoEm: Date.now(),
   },
   {
-    nomeEvento: 'Oficina de Dança: Frevo e Maracatu',
+    nomeEvento: 'Oficina de Dança Popular: Frevo e Maracatu',
     descricaoCurta: 'Venha aprender os passos básicos de duas das mais importantes expressões culturais do Brasil.',
     cidade: 'Salvador',
     estado: 'BA',
@@ -153,28 +152,16 @@ const DEMO_EVENTS: Omit<EventData, 'id'>[] = [
   }
 ];
 
-function getLocalEvents(): EventData[] {
-  try {
-    const data = localStorage.getItem(EVENTS_STORAGE_KEY);
-    return data ? JSON.parse(data) : [];
-  } catch { return []; }
-}
-
-function saveLocalEvents(events: EventData[]) {
-  localStorage.setItem(EVENTS_STORAGE_KEY, JSON.stringify(events));
-}
-
 export async function seedDemoEvents() {
-  const localEvents = getLocalEvents();
-  if (localEvents.length > 0) return;
-
-  const now = Date.now();
-  const eventsToSeed: EventData[] = DEMO_EVENTS.map((e, i) => ({
-    ...e,
-    id: 'demo_' + (now + i),
-    criadoEm: now,
-    atualizadoEm: now,
-  }));
-
-  saveLocalEvents(eventsToSeed);
+  const q = query(collection(db, 'events'), limit(1));
+  const snapshot = await getDocs(q);
+  
+  // Só insere se não tiver nenhum evento no banco
+  if (snapshot.empty) {
+    console.log('Seeding demo events...');
+    for (const event of DEMO_EVENTS) {
+      await addDoc(collection(db, 'events'), event);
+    }
+    console.log('Seed completo!');
+  }
 }
