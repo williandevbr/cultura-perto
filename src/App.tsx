@@ -9,7 +9,6 @@ import EventDetails from './pages/EventDetails';
 import Indicators from './pages/Indicators';
 import About from './pages/About';
 import { seedDemoEvents } from './lib/seed';
-import { getFirebaseReady } from './lib/firebase';
 import { LocationProvider } from './context/LocationContext';
 import { MapPin, Home as HomeIcon } from 'lucide-react';
 
@@ -32,9 +31,7 @@ export default function App() {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    getFirebaseReady().then(() => {
-      seedDemoEvents().then(() => setReady(true)).catch(() => setReady(true));
-    });
+    seedDemoEvents().then(() => setReady(true)).catch(() => setReady(true));
   }, []);
 
   if (!ready) {
