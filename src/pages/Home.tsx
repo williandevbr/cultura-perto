@@ -18,7 +18,10 @@ export default function Home() {
     getEvents().then(setEvents).catch(() => {});
   }, []);
 
-  const upcoming = events.slice(0, 3);
+  const filtered = location
+    ? events.filter(e => e.cidade?.toLowerCase() === location.cidade.toLowerCase())
+    : events;
+  const upcoming = filtered.slice(0, 3);
   const totalCities = new Set(events.map(e => e.cidade?.toLowerCase())).size;
 
   return (
@@ -62,18 +65,25 @@ export default function Home() {
           </Link>
         </div>
 
-        {events.length > 0 && (
+        {filtered.length > 0 && (
           <div className="flex flex-wrap justify-center gap-8 sm:gap-12 pt-8 border-t border-gray-200 w-full">
             <div className="text-center">
-              <div className="text-3xl font-bold text-gray-900">{events.length}</div>
+              <div className="text-3xl font-bold text-gray-900">{filtered.length}</div>
               <div className="text-sm text-gray-500 font-medium">Eventos ativos</div>
             </div>
+            {location ? (
+              <div className="text-center">
+                <div className="text-3xl font-bold text-gray-900">1</div>
+                <div className="text-sm text-gray-500 font-medium">Cidade</div>
+              </div>
+            ) : (
+              <div className="text-center">
+                <div className="text-3xl font-bold text-gray-900">{totalCities}</div>
+                <div className="text-sm text-gray-500 font-medium">Cidades</div>
+              </div>
+            )}
             <div className="text-center">
-              <div className="text-3xl font-bold text-gray-900">{totalCities}</div>
-              <div className="text-sm text-gray-500 font-medium">Cidades</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-gray-900">{events.filter(e => e.preco === 'gratuito').length}</div>
+              <div className="text-3xl font-bold text-gray-900">{filtered.filter(e => e.preco === 'gratuito').length}</div>
               <div className="text-sm text-gray-500 font-medium">Gratuitos</div>
             </div>
           </div>

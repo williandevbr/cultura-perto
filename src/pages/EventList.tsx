@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { getEvents } from '../lib/events';
 import { EventData, ESTADOS_BRASILEIROS, EventCategory } from '../types';
 import { Search, Calendar, MapPin, Accessibility, AlertCircle } from 'lucide-react';
-
+import { useLocation } from '../context/LocationContext';
 import { capitalizeWords } from '../lib/utils';
 
 const CATEGORIAS: EventCategory[] = [
@@ -13,14 +13,15 @@ const CATEGORIAS: EventCategory[] = [
 ];
 
 export default function EventList() {
+  const { location } = useLocation();
   const [events, setEvents] = useState<EventData[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [search, setSearch] = useState('');
   
   // Filtros
-  const [cidade, setCidade] = useState('');
-  const [estado, setEstado] = useState('');
+  const [cidade, setCidade] = useState(location?.cidade || '');
+  const [estado, setEstado] = useState(location?.estado || '');
   const [categoria, setCategoria] = useState('');
   const [preco, setPreco] = useState('');
   const [acessivel, setAcessivel] = useState(false);
@@ -98,16 +99,30 @@ export default function EventList() {
     <div className="space-y-8 animate-in fade-in duration-500">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Eventos Culturais</h1>
-          <p className="text-gray-600">Descubra o que está acontecendo perto de você.</p>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            {location ? `Eventos em ${capitalizeWords(location.cidade)}` : 'Eventos Culturais'}
+          </h1>
+          <p className="text-gray-600">
+            {location ? 'Mostrando eventos da sua região' : 'Descubra o que está acontecendo perto de você.'}
+          </p>
         </div>
         
-        {hasDemo && (
-          <div className="bg-blue-50 text-blue-700 px-4 py-2 rounded-lg text-sm flex items-center gap-2">
-            <AlertCircle className="w-4 h-4" />
-            <span>Alguns eventos são de demonstração.</span>
-          </div>
-        )}
+        <div className="flex items-center gap-3">
+          {location && (
+            <button
+              onClick={() => { setCidade(''); setEstado(''); }}
+              className="bg-gray-100 hover:bg-gray-200 text-gray-600 px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+            >
+              Ver todas as cidades
+            </button>
+          )}
+          {hasDemo && (
+            <div className="bg-blue-50 text-blue-700 px-4 py-2 rounded-lg text-sm flex items-center gap-2">
+              <AlertCircle className="w-4 h-4" />
+              <span>Alguns eventos são de demonstração.</span>
+            </div>
+          )}
+        </div>
       </div>
 
       <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
@@ -123,11 +138,11 @@ export default function EventList() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-          <select value={estado} onChange={e => setEstado(e.target.value)} className="w-full rounded-lg border-gray-300 border p-2.5 text-sm bg-white">
+          <select value={estado} onChange={e => setEstado(e.target.value)} disabled={!!location} className="w-full rounded-lg border-gray-300 border p-2.5 text-sm bg-white disabled:bg-gray-50 disabled:text-gray-500">
             <option value="">Todos os estados</option>
             {ESTADOS_BRASILEIROS.map(uf => <option key={uf} value={uf}>{uf}</option>)}
           </select>
-          <input type="text" placeholder="Cidade" value={cidade} onChange={e => setCidade(e.target.value)} className="w-full rounded-lg border-gray-300 border p-2.5 text-sm" />
+          <input type="text" placeholder="Cidade" value={cidade} onChange={e => setCidade(e.target.value)} disabled={!!location} className="w-full rounded-lg border-gray-300 border p-2.5 text-sm disabled:bg-gray-50 disabled:text-gray-500" />
           <select value={categoria} onChange={e => setCategoria(e.target.value)} className="w-full rounded-lg border-gray-300 border p-2.5 text-sm bg-white">
             <option value="">Todas categorias</option>
             {CATEGORIAS.map(cat => <option key={cat} value={cat}>{cat}</option>)}
