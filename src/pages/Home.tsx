@@ -18,10 +18,7 @@ export default function Home() {
     getEvents().then(setEvents).catch(() => {});
   }, []);
 
-  const cityEvents = location
-    ? events.filter(e => e.cidade?.toLowerCase() === location.cidade?.toLowerCase())
-    : events;
-  const upcoming = cityEvents.slice(0, 3);
+  const upcoming = events.slice(0, 3);
   const totalCities = new Set(events.map(e => e.cidade?.toLowerCase())).size;
 
   return (
