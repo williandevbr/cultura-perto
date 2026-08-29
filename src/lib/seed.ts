@@ -1,0 +1,180 @@
+import { EventData } from '../types';
+
+const EVENTS_STORAGE_KEY = 'cultura_perto_events';
+
+const DEMO_EVENTS: Omit<EventData, 'id'>[] = [
+  {
+    nomeEvento: 'Sarau da Praça',
+    descricaoCurta: 'Um encontro de poetas, músicos e artistas locais na praça principal para celebrar a cultura popular com microfone aberto.',
+    cidade: 'São Paulo',
+    estado: 'SP',
+    bairro: 'Vila Madalena',
+    localEvento: 'Praça das Corujas',
+    dataEvento: '2026-09-10',
+    horaEvento: '18:00',
+    preco: 'gratuito',
+    categoria: 'Literatura',
+    acessivel: true,
+    recursosAcessibilidade: ['Rampa de acesso', 'Banheiro acessível'],
+    status: 'publicado',
+    demonstracao: true,
+    criadoEm: Date.now(),
+    atualizadoEm: Date.now(),
+  },
+  {
+    nomeEvento: 'Oficina de Grafite',
+    descricaoCurta: 'Aprenda técnicas básicas de grafite com artistas urbanos da região. Material incluso para todos os participantes.',
+    cidade: 'Rio de Janeiro',
+    estado: 'RJ',
+    bairro: 'Lapa',
+    localEvento: 'Galpão das Artes',
+    dataEvento: '2026-09-15',
+    horaEvento: '14:00',
+    preco: 'pago',
+    valorIngresso: 'R$ 30,00',
+    categoria: 'Artes visuais',
+    acessivel: false,
+    recursosAcessibilidade: [],
+    status: 'publicado',
+    demonstracao: true,
+    criadoEm: Date.now(),
+    atualizadoEm: Date.now(),
+  },
+  {
+    nomeEvento: 'Roda de Samba',
+    descricaoCurta: 'Samba de raiz com o grupo Vozes do Morro, trazendo os grandes clássicos e composições inéditas.',
+    cidade: 'Belo Horizonte',
+    estado: 'MG',
+    bairro: 'Santa Tereza',
+    localEvento: 'Bar do Museu',
+    dataEvento: '2026-09-12',
+    horaEvento: '20:00',
+    preco: 'pago',
+    valorIngresso: 'R$ 15,00',
+    categoria: 'Música',
+    acessivel: true,
+    recursosAcessibilidade: ['Banheiro acessível'],
+    status: 'publicado',
+    demonstracao: true,
+    criadoEm: Date.now(),
+    atualizadoEm: Date.now(),
+  },
+  {
+    nomeEvento: 'Feira de Artesanato Local',
+    descricaoCurta: 'Exposição e venda de artesanato regional, com participação de mais de 30 artesãos da comunidade.',
+    cidade: 'Recife',
+    estado: 'PE',
+    bairro: 'Recife Antigo',
+    localEvento: 'Rua do Bom Jesus',
+    dataEvento: '2026-09-20',
+    horaEvento: '09:00',
+    preco: 'gratuito',
+    categoria: 'Feira cultural',
+    acessivel: true,
+    recursosAcessibilidade: ['Rampa de acesso'],
+    status: 'publicado',
+    demonstracao: true,
+    criadoEm: Date.now(),
+    atualizadoEm: Date.now(),
+  },
+  {
+    nomeEvento: 'Teatro Comunitário: O Auto da Compadecida',
+    descricaoCurta: 'Apresentação da clássica obra de Ariano Suassuna pelo grupo de teatro amador da comunidade.',
+    cidade: 'Fortaleza',
+    estado: 'CE',
+    bairro: 'Centro',
+    localEvento: 'Teatro São José',
+    dataEvento: '2026-09-25',
+    horaEvento: '19:30',
+    preco: 'pago',
+    valorIngresso: 'R$ 10,00 (meia para todos)',
+    categoria: 'Teatro',
+    acessivel: true,
+    recursosAcessibilidade: ['Intérprete de Libras', 'Rampa de acesso', 'Banheiro acessível'],
+    status: 'publicado',
+    demonstracao: true,
+    criadoEm: Date.now(),
+    atualizadoEm: Date.now(),
+  },
+  {
+    nomeEvento: 'Batalha de Rima',
+    descricaoCurta: 'Encontro de MCs para batalhas de conhecimento e arte. Inscrições abertas na hora.',
+    cidade: 'Brasília',
+    estado: 'DF',
+    bairro: 'Ceilândia',
+    localEvento: 'Praça do Cidadão',
+    dataEvento: '2026-09-18',
+    horaEvento: '20:00',
+    preco: 'gratuito',
+    categoria: 'Cultura popular',
+    acessivel: false,
+    recursosAcessibilidade: [],
+    status: 'publicado',
+    demonstracao: true,
+    criadoEm: Date.now(),
+    atualizadoEm: Date.now(),
+  },
+  {
+    nomeEvento: 'Cinema na Escola: Curtas Nacionais',
+    descricaoCurta: 'Exibição de curtas-metragens independentes produzidos no Brasil, seguido de roda de conversa com realizadores.',
+    cidade: 'Curitiba',
+    estado: 'PR',
+    bairro: 'Portão',
+    localEvento: 'Cine Guarani',
+    dataEvento: '2026-09-22',
+    horaEvento: '16:00',
+    preco: 'gratuito',
+    categoria: 'Cinema',
+    acessivel: true,
+    recursosAcessibilidade: ['Audiodescrição', 'Rampa de acesso'],
+    status: 'publicado',
+    demonstracao: true,
+    criadoEm: Date.now(),
+    atualizadoEm: Date.now(),
+  },
+  {
+    nomeEvento: 'Oficina de Dança: Frevo e Maracatu',
+    descricaoCurta: 'Venha aprender os passos básicos de duas das mais importantes expressões culturais do Brasil.',
+    cidade: 'Salvador',
+    estado: 'BA',
+    bairro: 'Pelourinho',
+    localEvento: 'Casa da Dança',
+    dataEvento: '2026-09-28',
+    horaEvento: '15:00',
+    preco: 'pago',
+    valorIngresso: 'R$ 25,00',
+    categoria: 'Dança',
+    acessivel: false,
+    recursosAcessibilidade: [],
+    status: 'publicado',
+    demonstracao: true,
+    criadoEm: Date.now(),
+    atualizadoEm: Date.now(),
+  }
+];
+
+function getLocalEvents(): EventData[] {
+  try {
+    const data = localStorage.getItem(EVENTS_STORAGE_KEY);
+    return data ? JSON.parse(data) : [];
+  } catch { return []; }
+}
+
+function saveLocalEvents(events: EventData[]) {
+  localStorage.setItem(EVENTS_STORAGE_KEY, JSON.stringify(events));
+}
+
+export async function seedDemoEvents() {
+  const localEvents = getLocalEvents();
+  if (localEvents.length > 0) return;
+
+  const now = Date.now();
+  const eventsToSeed: EventData[] = DEMO_EVENTS.map((e, i) => ({
+    ...e,
+    id: 'demo_' + (now + i),
+    criadoEm: now,
+    atualizadoEm: now,
+  }));
+
+  saveLocalEvents(eventsToSeed);
+}
