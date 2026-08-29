@@ -1,0 +1,12 @@
+{
+       "projectId": "cultura-perto",
+       "appId": "1:187885410906:web:98a996e1aa3e8ed5b01663",
+        "apiKey": "AIzaSyArztIbtVDtSap5YRGyADzdwN4cQLdV-Xw",
+        "authDomain": "cultura-perto.firebaseapp.com",
+       "firestoreDatabaseId": "(default)",
+       "storageBucket": "cultura-perto.firebasestorage.app",
+       "messagingSenderId": "187885410906",
+       "measurementId": "",
+       "oAuthClientId": "",
+       "recaptchaSiteKey": ""
+     }

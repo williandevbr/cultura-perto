@@ -7,4 +7,3 @@ coverage/
 .env*
 !.env.example
 .trashed-*
-firebase-applet-config.json
