@@ -1,4 +1,4 @@
-import { collection, addDoc, getDocs, limit, query } from 'firebase/firestore';
+import { collection, addDoc, getDocs } from 'firebase/firestore';
 import { db } from './firebase';
 
 const DEMO_EVENTS = [
@@ -153,12 +153,13 @@ const DEMO_EVENTS = [
 ];
 
 export async function seedDemoEvents() {
-  const q = query(collection(db, 'events'), limit(1));
-  const snapshot = await getDocs(q);
+  const snapshot = await getDocs(collection(db, 'events'));
+  const existingNames = new Set(snapshot.docs.map(d => d.data().nomeEvento));
 
-  if (snapshot.empty) {
-    console.log('Seeding demo events...');
-    for (const event of DEMO_EVENTS) {
+  const missing = DEMO_EVENTS.filter(e => !existingNames.has(e.nomeEvento));
+  if (missing.length > 0) {
+    console.log(`Seeding ${missing.length} missing demo events...`);
+    for (const event of missing) {
       await addDoc(collection(db, 'events'), event);
     }
     console.log('Seed completo!');
